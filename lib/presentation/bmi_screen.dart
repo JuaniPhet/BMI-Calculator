@@ -510,15 +510,22 @@ class _BmiScreenState extends State<BmiScreen> {
               padding: const EdgeInsets.only(
                 bottom: 50,
               ),
-              child: OutlinedButton(
+              child: ElevatedButton.icon(
                 onPressed: () {},
-                child: const Text(
+                label: const Text(
                   "Calculate",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
+                ),
+                icon: const Icon(
+                  Icons.update,
+                  color: Colors.white,
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.deepPurple.withOpacity(0.5),
                 ),
               ),
             )
