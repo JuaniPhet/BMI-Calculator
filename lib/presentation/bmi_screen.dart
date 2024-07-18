@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:gap/gap.dart';
 
 class BmiScreen extends StatefulWidget {
@@ -11,8 +14,35 @@ class BmiScreen extends StatefulWidget {
 class _BmiScreenState extends State<BmiScreen> {
   String gender = "male";
   bool isMale = true;
-  String unit = "In";
-  double heightValue = 25;
+  String unit = "Cm";
+  double heightValue = 160;
+  double weightValue = 10;
+  double ageValue = 21;
+
+  double cmToIn(double Cm) {
+    return Cm * 0.393701;
+  }
+
+  double cmToFt(double Cm) {
+    return Cm * 0.0328084;
+  }
+
+  double InToCm(double In) {
+    return In / 0.393701;
+  }
+
+  double InToFt(double In) {
+    return In / 12;
+  }
+
+  double FtToCm(double Ft) {
+    return Ft / 0.0328084;
+  }
+
+  double FtToIn(double Ft) {
+    return Ft * 12;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,80 +76,86 @@ class _BmiScreenState extends State<BmiScreen> {
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        gender = "male";
-                        isMale = true;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: isMale
-                            ? Colors.deepPurple.withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.3),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(15)),
-                      ),
-                      child: const Column(
-                        children: [
-                          Icon(
-                            Icons.male,
-                            color: Colors.deepPurple,
-                            size: 45,
-                          ),
-                          const Text(
-                            "MALE",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          gender = "male";
+                          isMale = true;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isMale
+                              ? Colors.deepPurple.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.3),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.male,
+                              color: Colors.deepPurple,
+                              size: 45,
                             ),
-                          )
-                        ],
+                            Gap(20),
+                            const Text(
+                              "MALE",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const Gap(10),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      setState(() {
-                        gender = "female";
-                        isMale = false;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: !isMale
-                            ? Colors.deepPurple.withOpacity(0.2)
-                            : Colors.grey.withOpacity(0.3),
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(15)),
-                      ),
-                      child: const Column(
-                        children: [
-                          Icon(
-                            Icons.female,
-                            color: Colors.deepPurple,
-                            size: 45,
-                          ),
-                          Text(
-                            "FEMALE",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                  const Gap(10),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          gender = "female";
+                          isMale = false;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: !isMale
+                              ? Colors.deepPurple.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.3),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.female,
+                              color: Colors.deepPurple,
+                              size: 45,
                             ),
-                          )
-                        ],
+                            Gap(20),
+                            Text(
+                              "FEMALE",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Gap(8),
             Expanded(
@@ -151,6 +187,13 @@ class _BmiScreenState extends State<BmiScreen> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
+                                      if (unit == "Cm") {
+                                        heightValue =
+                                            cmToIn(heightValue).floorToDouble();
+                                      } else if (unit == "Ft") {
+                                        heightValue =
+                                            FtToIn(heightValue).floorToDouble();
+                                      }
                                       unit = "In";
                                     });
                                   },
@@ -160,7 +203,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                       color: unit == "In"
-                                          ? Colors.deepPurple.withOpacity(0.2)
+                                          ? Colors.deepPurple.withOpacity(0.5)
                                           : Colors.grey.withOpacity(0.7),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
@@ -177,6 +220,13 @@ class _BmiScreenState extends State<BmiScreen> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
+                                      if (unit == "In") {
+                                        heightValue = InToFt(heightValue)
+                                            .ceilToDouble(); // convert in to ft
+                                      } else if (unit == "Cm") {
+                                        heightValue = cmToFt(heightValue)
+                                            .floorToDouble(); // convert cm to ft
+                                      }
                                       unit = "Ft";
                                     });
                                   },
@@ -186,7 +236,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                       color: unit == "Ft"
-                                          ? Colors.deepPurple.withOpacity(0.2)
+                                          ? Colors.deepPurple.withOpacity(0.5)
                                           : Colors.grey.withOpacity(0.7),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
@@ -203,6 +253,13 @@ class _BmiScreenState extends State<BmiScreen> {
                                 InkWell(
                                   onTap: () {
                                     setState(() {
+                                      if (unit == "In") {
+                                        heightValue = InToCm(heightValue)
+                                            .ceilToDouble(); // convert in to ft
+                                      } else if (unit == "Ft") {
+                                        heightValue = FtToCm(heightValue)
+                                            .ceilToDouble(); // convert cm to ft
+                                      }
                                       unit = "Cm";
                                     });
                                   },
@@ -212,7 +269,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     height: 30,
                                     decoration: BoxDecoration(
                                       color: unit == "Cm"
-                                          ? Colors.deepPurple.withOpacity(0.2)
+                                          ? Colors.deepPurple.withOpacity(0.5)
                                           : Colors.grey.withOpacity(0.7),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
@@ -231,17 +288,27 @@ class _BmiScreenState extends State<BmiScreen> {
                         ],
                       ),
                     ),
+                    Spacer(),
                     Text(
-                      "${heightValue.round().toString()}",
+                      "${heightValue.round()}",
                       style: const TextStyle(
                         fontSize: 70,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
+                    Spacer(),
                     Slider(
                       value: heightValue,
-                      min: 25,
-                      max: 275,
+                      min: unit == "Cm"
+                          ? 31
+                          : unit == "Ft"
+                              ? 1 //cmToFt(25).floorToDouble()
+                              : 12, //cmToIn(25).floorToDouble(),
+                      max: unit == "Cm"
+                          ? 275
+                          : unit == "Ft"
+                              ? cmToFt(275).floorToDouble()
+                              : cmToIn(275).floorToDouble(),
                       activeColor: Colors.deepPurple,
                       inactiveColor: Colors.grey,
                       onChanged: (double value) {
@@ -251,6 +318,207 @@ class _BmiScreenState extends State<BmiScreen> {
                       },
                     ),
                   ],
+                ),
+              ),
+            ),
+            Gap(8),
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Weight",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Gap(10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      weightValue--;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(8),
+                                Text(
+                                  "${weightValue.toStringAsFixed(0)}",
+                                  style: const TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const Gap(8),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      weightValue++;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Gap(10),
+                          const Text(
+                            "Kg",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Age",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Gap(10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      ageValue--;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Gap(8),
+                                Text(
+                                  "${ageValue.toStringAsFixed(0)}",
+                                  style: const TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Gap(8),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      ageValue++;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Gap(10),
+                          const Text(
+                            "Year",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Gap(10),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: 50,
+              ),
+              child: OutlinedButton(
+                onPressed: () {},
+                child: const Text(
+                  "Calculate",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             )
