@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fourth/presentation/bmi_screen.dart';
 import 'package:gap/gap.dart';
+
+import 'presentation/bmi_screen.dart';
 
 class AppInitScreen extends StatefulWidget {
   const AppInitScreen({super.key});

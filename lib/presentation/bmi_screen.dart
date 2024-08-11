@@ -1,16 +1,26 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
+import '../data/models/gender_model.dart';
+import '../business_logic/gender_bloc/gender_bloc.dart';
+
 class BmiScreen extends StatefulWidget {
-  const BmiScreen({super.key});
+  // final GenderModel genderModel;
+  const BmiScreen({
+    super.key,
+    // required this.genderModel,
+  });
 
   @override
   State<BmiScreen> createState() => _BmiScreenState();
 }
 
 class _BmiScreenState extends State<BmiScreen> {
+  late GenderBloc genderBloc;
+
   String gender = "male";
   bool isMale = true;
   String unit = "Cm";
@@ -19,13 +29,22 @@ class _BmiScreenState extends State<BmiScreen> {
   double ageValue = 21;
   Timer? timer;
 
-  late TextEditingController fisrtNameController;
+  late TextEditingController _fisrtNameController;
   late FocusNode firstFocusNode;
 
+  @override
   void initState() {
-    fisrtNameController = TextEditingController();
+    genderBloc = GenderBloc(genderModel: widget.genderModel)
+      ..add(FetchGender(name: ''));
+    _fisrtNameController = TextEditingController();
     firstFocusNode = FocusNode();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _fisrtNameController.dispose();
+    super.dispose();
   }
 
   double cmToIn(double Cm) {
@@ -93,48 +112,68 @@ class _BmiScreenState extends State<BmiScreen> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: fisrtNameController,
+                    controller: _fisrtNameController,
                     focusNode: firstFocusNode,
                     decoration: const InputDecoration(
-                      labelText: 'Enter your firstname',
-                      hintText: 'Japhet',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                        borderSide: BorderSide(
-                          width: 2,
-                        ),
-                      ),
+                      hintText: 'Enter your firstname',
+                      border: OutlineInputBorder(),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20)),
                         borderSide: BorderSide(
                           color: Colors.deepPurple,
-                          width: 2,
+                          width: 2.5,
                         ),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                        borderSide: BorderSide(
+                          color: Colors.grey,
+                          width: 2.5,
+                        ),
+                      ),
+                      errorBorder: OutlineInputBorder(),
                     ),
                   ),
                   const Gap(8),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    label: const Text(
-                      "Check your Gender",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white,
-                      ),
-                    ),
-                    icon: const Icon(
-                      Icons.check_box,
-                      color: Colors.white,
-                      size: 25,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.deepPurple.withOpacity(0.5),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 50,
-                          vertical: 5,
-                        )),
+                  BlocBuilder<GenderBloc, GenderState>(
+                    bloc: genderBloc,
+                    builder: (context, state) {
+                      return ElevatedButton.icon(
+                        onPressed: () {
+                          genderBloc.add(
+                              FetchGender(name: _fisrtNameController.text));
+                          print(_fisrtNameController.text);
+
+                          // if (genderBloc.state == FetchGenderSuccess) {
+                          //   gender = ;
+                          // }
+                        },
+                        label: genderBloc.state == FetchGenderLoading
+                            ? const CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              )
+                            : const Text(
+                                "Check your Gender",
+                                style: TextStyle(
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.w300,
+                                  color: Colors.white,
+                                ),
+                              ),
+                        icon: const Icon(
+                          Icons.check_box,
+                          color: Colors.white,
+                          size: 25,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.deepPurple.withOpacity(0.5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 50,
+                              vertical: 5,
+                            )),
+                      );
+                    },
                   )
                 ],
               ),
@@ -232,117 +271,117 @@ class _BmiScreenState extends State<BmiScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Text(
-                          "Height",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                        const Expanded(
+                          child: Text(
+                            "Height",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        Expanded(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (unit == "Cm") {
-                                      heightValue =
-                                          cmToIn(heightValue).floorToDouble();
-                                    } else if (unit == "Ft") {
-                                      heightValue =
-                                          FtToIn(heightValue).floorToDouble();
-                                    }
-                                    unit = "In";
-                                  });
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: unit == "In"
-                                        ? Colors.deepPurple.withOpacity(0.5)
-                                        : Colors.grey.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: const Text(
-                                    "In",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (unit == "Cm") {
+                                    heightValue =
+                                        cmToIn(heightValue).floorToDouble();
+                                  } else if (unit == "Ft") {
+                                    heightValue =
+                                        FtToIn(heightValue).floorToDouble();
+                                  }
+                                  unit = "In";
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: unit == "In"
+                                      ? Colors.deepPurple.withOpacity(0.5)
+                                      : Colors.grey.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: const Text(
+                                  "In",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              const Gap(10),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (unit == "In") {
-                                      heightValue = InToFt(heightValue)
-                                          .ceilToDouble(); // convert in to ft
-                                    } else if (unit == "Cm") {
-                                      heightValue = cmToFt(heightValue)
-                                          .floorToDouble(); // convert cm to ft
-                                    }
-                                    unit = "Ft";
-                                  });
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: unit == "Ft"
-                                        ? Colors.deepPurple.withOpacity(0.5)
-                                        : Colors.grey.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: const Text(
-                                    "Ft",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            ),
+                            const Gap(10),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (unit == "In") {
+                                    heightValue = InToFt(heightValue)
+                                        .ceilToDouble(); // convert in to ft
+                                  } else if (unit == "Cm") {
+                                    heightValue = cmToFt(heightValue)
+                                        .floorToDouble(); // convert cm to ft
+                                  }
+                                  unit = "Ft";
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: unit == "Ft"
+                                      ? Colors.deepPurple.withOpacity(0.5)
+                                      : Colors.grey.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: const Text(
+                                  "Ft",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              const Gap(10),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (unit == "In") {
-                                      heightValue = InToCm(heightValue)
-                                          .ceilToDouble(); // convert in to ft
-                                    } else if (unit == "Ft") {
-                                      heightValue = FtToCm(heightValue)
-                                          .ceilToDouble(); // convert cm to ft
-                                    }
-                                    unit = "Cm";
-                                  });
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  width: 30,
-                                  height: 30,
-                                  decoration: BoxDecoration(
-                                    color: unit == "Cm"
-                                        ? Colors.deepPurple.withOpacity(0.5)
-                                        : Colors.grey.withOpacity(0.7),
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                  child: const Text(
-                                    "Cm",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            ),
+                            const Gap(10),
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (unit == "In") {
+                                    heightValue = InToCm(heightValue)
+                                        .ceilToDouble(); // convert in to ft
+                                  } else if (unit == "Ft") {
+                                    heightValue = FtToCm(heightValue)
+                                        .ceilToDouble(); // convert cm to ft
+                                  }
+                                  unit = "Cm";
+                                });
+                              },
+                              child: Container(
+                                alignment: Alignment.center,
+                                width: 30,
+                                height: 30,
+                                decoration: BoxDecoration(
+                                  color: unit == "Cm"
+                                      ? Colors.deepPurple.withOpacity(0.5)
+                                      : Colors.grey.withOpacity(0.7),
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                                child: const Text(
+                                  "Cm",
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
