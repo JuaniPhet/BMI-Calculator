@@ -1,8 +1,8 @@
 class GenderModel {
-  final int count;
+  final num count;
   final String name;
   final String gender;
-  final int probability;
+  final num probability;
 
   GenderModel({
     required this.count,

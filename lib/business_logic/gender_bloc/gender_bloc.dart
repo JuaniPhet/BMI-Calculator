@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_fourth/data/services/gender_service.dart';
 import 'package:meta/meta.dart';
 
 import '../../data/repositories/gender_repository.dart';
@@ -8,14 +10,18 @@ part 'gender_event.dart';
 part 'gender_state.dart';
 
 class GenderBloc extends Bloc<GenderEvent, GenderState> {
-  final GenderModel genderModel;
+  final GenderRepository repository = GenderRepository(
+    genderService: GenderService(
+      dio: Dio(),
+    ),
+  );
 
-  GenderBloc({required this.genderModel}) : super(GenderInitial()) {
+  GenderBloc() : super(GenderInitial()) {
     on<FetchGender>((event, emit) async {
       try {
         emit(FetchGenderLoading());
 
-        var gender = await GenderRepository().getGender(name: genderModel.name);
+        var gender = await repository.fetchGender(name: event.name);
 
         emit(FetchGenderSuccess(genderModel: gender));
       } catch (e) {

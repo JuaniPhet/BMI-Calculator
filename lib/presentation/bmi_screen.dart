@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
-import '../data/models/gender_model.dart';
 import '../business_logic/gender_bloc/gender_bloc.dart';
 
 class BmiScreen extends StatefulWidget {
@@ -34,8 +33,7 @@ class _BmiScreenState extends State<BmiScreen> {
 
   @override
   void initState() {
-    genderBloc = GenderBloc(genderModel: widget.genderModel)
-      ..add(FetchGender(name: ''));
+    genderBloc = GenderBloc();
     _fisrtNameController = TextEditingController();
     firstFocusNode = FocusNode();
     super.initState();
@@ -102,7 +100,7 @@ class _BmiScreenState extends State<BmiScreen> {
         padding: const EdgeInsets.symmetric(
           horizontal: 12,
         ),
-        child: ListView(
+        child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(
@@ -135,20 +133,29 @@ class _BmiScreenState extends State<BmiScreen> {
                     ),
                   ),
                   const Gap(8),
-                  BlocBuilder<GenderBloc, GenderState>(
+                  BlocConsumer<GenderBloc, GenderState>(
                     bloc: genderBloc,
+                    listener: (context, state) {
+                      if (state is FetchGenderFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(state.message)));
+                      }
+
+                      if (state is FetchGenderSuccess) {
+                        setState(() {
+                          gender = state.genderModel.gender;
+                          isMale = gender == 'male';
+                        });
+                      }
+                    },
                     builder: (context, state) {
                       return ElevatedButton.icon(
                         onPressed: () {
                           genderBloc.add(
                               FetchGender(name: _fisrtNameController.text));
                           print(_fisrtNameController.text);
-
-                          // if (genderBloc.state == FetchGenderSuccess) {
-                          //   gender = ;
-                          // }
                         },
-                        label: genderBloc.state == FetchGenderLoading
+                        label: state is FetchGenderLoading
                             ? const CircularProgressIndicator(
                                 strokeWidth: 2,
                                 color: Colors.white,
@@ -178,476 +185,491 @@ class _BmiScreenState extends State<BmiScreen> {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      gender = "male";
-                      isMale = true;
-                    });
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.46,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: isMale
-                          ? Colors.deepPurple.withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.3),
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.male,
-                          color: Colors.deepPurple,
-                          size: 45,
-                        ),
-                        Gap(20),
-                        Text(
-                          "MALE",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      gender = "female";
-                      isMale = false;
-                    });
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 0.46,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: !isMale
-                          ? Colors.deepPurple.withOpacity(0.2)
-                          : Colors.grey.withOpacity(0.3),
-                      borderRadius: const BorderRadius.all(Radius.circular(15)),
-                    ),
-                    child: const Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.female,
-                          color: Colors.deepPurple,
-                          size: 45,
-                        ),
-                        Gap(20),
-                        Text(
-                          "FEMALE",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const Gap(10),
-            Container(
-              height: 250,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                color: Colors.grey.withOpacity(0.3),
-              ),
-              child: Column(
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        const Expanded(
-                          child: Text(
-                            "Height",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          gender = "male";
+                          isMale = true;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isMale
+                              ? Colors.deepPurple.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.3),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (unit == "Cm") {
-                                    heightValue =
-                                        cmToIn(heightValue).floorToDouble();
-                                  } else if (unit == "Ft") {
-                                    heightValue =
-                                        FtToIn(heightValue).floorToDouble();
-                                  }
-                                  unit = "In";
-                                });
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: unit == "In"
-                                      ? Colors.deepPurple.withOpacity(0.5)
-                                      : Colors.grey.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Text(
-                                  "In",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
+                            Icon(
+                              Icons.male,
+                              color: Colors.deepPurple,
+                              size: 45,
                             ),
-                            const Gap(10),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (unit == "In") {
-                                    heightValue = InToFt(heightValue)
-                                        .ceilToDouble(); // convert in to ft
-                                  } else if (unit == "Cm") {
-                                    heightValue = cmToFt(heightValue)
-                                        .floorToDouble(); // convert cm to ft
-                                  }
-                                  unit = "Ft";
-                                });
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: unit == "Ft"
-                                      ? Colors.deepPurple.withOpacity(0.5)
-                                      : Colors.grey.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Text(
-                                  "Ft",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                            Gap(20),
+                            Text(
+                              "MALE",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
                               ),
-                            ),
-                            const Gap(10),
-                            InkWell(
-                              onTap: () {
-                                setState(() {
-                                  if (unit == "In") {
-                                    heightValue = InToCm(heightValue)
-                                        .ceilToDouble(); // convert in to ft
-                                  } else if (unit == "Ft") {
-                                    heightValue = FtToCm(heightValue)
-                                        .ceilToDouble(); // convert cm to ft
-                                  }
-                                  unit = "Cm";
-                                });
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color: unit == "Cm"
-                                      ? Colors.deepPurple.withOpacity(0.5)
-                                      : Colors.grey.withOpacity(0.7),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                child: const Text(
-                                  "Cm",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            )
                           ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                  const Spacer(),
-                  Text(
-                    "${heightValue.round()}",
-                    style: const TextStyle(
-                      fontSize: 70,
-                      fontWeight: FontWeight.w800,
+                  Gap(10),
+                  Expanded(
+                    child: InkWell(
+                      onTap: () {
+                        setState(() {
+                          gender = "female";
+                          isMale = false;
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: !isMale
+                              ? Colors.deepPurple.withOpacity(0.2)
+                              : Colors.grey.withOpacity(0.3),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
+                        ),
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.female,
+                              color: Colors.deepPurple,
+                              size: 45,
+                            ),
+                            Gap(20),
+                            Text(
+                              "FEMALE",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                  Slider(
-                    value: heightValue,
-                    min: unit == "Cm"
-                        ? 31
-                        : unit == "Ft"
-                            ? 1 //cmToFt(25).floorToDouble()
-                            : 12, //cmToIn(25).floorToDouble(),
-                    max: unit == "Cm"
-                        ? 275
-                        : unit == "Ft"
-                            ? cmToFt(275).floorToDouble()
-                            : cmToIn(275).floorToDouble(),
-                    activeColor: Colors.deepPurple,
-                    inactiveColor: Colors.grey,
-                    onChanged: (double value) {
-                      setState(() {
-                        heightValue = value;
-                      });
-                    },
                   ),
                 ],
               ),
             ),
             const Gap(10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.46,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey.withOpacity(0.3),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Weight",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      const Gap(30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onLongPressStart: (_) {
-                                timer = Timer.periodic(
-                                    const Duration(milliseconds: 100), (timer) {
-                                  setState(() {
-                                    weightValue--;
-                                  });
-                                });
-                              },
-                              onLongPressEnd: (_) {
-                                timer?.cancel();
-                              },
-                              onTap: () {
-                                setState(() {
-                                  weightValue--;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple.withOpacity(0.5)),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Gap(8),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  weightValue.toStringAsFixed(0),
-                                  style: const TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Gap(8),
-                            GestureDetector(
-                              onLongPressStart: (_) {
-                                timer = Timer.periodic(
-                                    const Duration(milliseconds: 100), (timer) {
-                                  setState(() {
-                                    weightValue++;
-                                  });
-                                });
-                              },
-                              onLongPressEnd: (_) {
-                                timer?.cancel();
-                              },
-                              onTap: () {
-                                setState(() {
-                                  weightValue++;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple.withOpacity(0.5)),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Gap(30),
-                      const Text(
-                        "Kg",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+            Expanded(
+              flex: 3,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  color: Colors.grey.withOpacity(0.3),
                 ),
-                const Gap(10),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.46,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey.withOpacity(0.3),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Age",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 10,
                       ),
-                      const Gap(30),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            GestureDetector(
-                              onLongPressStart: (_) {
-                                timer = Timer.periodic(
-                                    const Duration(milliseconds: 100), (timer) {
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              "Height",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              InkWell(
+                                onTap: () {
                                   setState(() {
-                                    ageValue--;
+                                    if (unit == "Cm") {
+                                      heightValue =
+                                          cmToIn(heightValue).floorToDouble();
+                                    } else if (unit == "Ft") {
+                                      heightValue =
+                                          FtToIn(heightValue).floorToDouble();
+                                    }
+                                    unit = "In";
                                   });
-                                });
-                              },
-                              onLongPressEnd: (_) {
-                                timer?.cancel();
-                              },
-                              onTap: () {
-                                setState(() {
-                                  ageValue--;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple.withOpacity(0.5)),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Icon(
-                                    Icons.remove,
-                                    size: 25,
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: unit == "In"
+                                        ? Colors.deepPurple.withOpacity(0.5)
+                                        : Colors.grey.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Text(
+                                    "In",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const Gap(8),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  ageValue.toStringAsFixed(0),
-                                  style: const TextStyle(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const Gap(8),
-                            GestureDetector(
-                              onLongPressStart: (_) {
-                                timer = Timer.periodic(
-                                    const Duration(milliseconds: 100), (timer) {
+                              const Gap(10),
+                              InkWell(
+                                onTap: () {
                                   setState(() {
-                                    ageValue++;
+                                    if (unit == "In") {
+                                      heightValue = InToFt(heightValue)
+                                          .ceilToDouble(); // convert in to ft
+                                    } else if (unit == "Cm") {
+                                      heightValue = cmToFt(heightValue)
+                                          .floorToDouble(); // convert cm to ft
+                                    }
+                                    unit = "Ft";
                                   });
-                                });
-                              },
-                              onLongPressEnd: (_) {
-                                timer?.cancel();
-                              },
-                              onTap: () {
-                                setState(() {
-                                  ageValue++;
-                                });
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.deepPurple.withOpacity(0.5)),
-                                child: const Padding(
-                                  padding: EdgeInsets.all(15),
-                                  child: Icon(
-                                    Icons.add,
-                                    size: 25,
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: unit == "Ft"
+                                        ? Colors.deepPurple.withOpacity(0.5)
+                                        : Colors.grey.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Text(
+                                    "Ft",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
+                              const Gap(10),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    if (unit == "In") {
+                                      heightValue = InToCm(heightValue)
+                                          .ceilToDouble(); // convert in to ft
+                                    } else if (unit == "Ft") {
+                                      heightValue = FtToCm(heightValue)
+                                          .ceilToDouble(); // convert cm to ft
+                                    }
+                                    unit = "Cm";
+                                  });
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  width: 30,
+                                  height: 30,
+                                  decoration: BoxDecoration(
+                                    color: unit == "Cm"
+                                        ? Colors.deepPurple.withOpacity(0.5)
+                                        : Colors.grey.withOpacity(0.7),
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  child: const Text(
+                                    "Cm",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                      const Gap(30),
-                      const Text(
-                        "Year",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      "${heightValue.round()}",
+                      style: const TextStyle(
+                        fontSize: 70,
+                        fontWeight: FontWeight.w800,
                       ),
-                    ],
-                  ),
+                    ),
+                    const Spacer(),
+                    Slider(
+                      value: heightValue,
+                      min: unit == "Cm"
+                          ? 31
+                          : unit == "Ft"
+                              ? 1 //cmToFt(25).floorToDouble()
+                              : 12, //cmToIn(25).floorToDouble(),
+                      max: unit == "Cm"
+                          ? 275
+                          : unit == "Ft"
+                              ? cmToFt(275).floorToDouble()
+                              : cmToIn(275).floorToDouble(),
+                      activeColor: Colors.deepPurple,
+                      inactiveColor: Colors.grey,
+                      onChanged: (double value) {
+                        setState(() {
+                          heightValue = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
-              ],
+              ),
+            ),
+            const Gap(10),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Weight",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onLongPressStart: (_) {
+                                    timer = Timer.periodic(
+                                        const Duration(milliseconds: 100),
+                                        (timer) {
+                                      setState(() {
+                                        weightValue--;
+                                      });
+                                    });
+                                  },
+                                  onLongPressEnd: (_) {
+                                    timer?.cancel();
+                                  },
+                                  onTap: () {
+                                    setState(() {
+                                      weightValue--;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(8),
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      weightValue.toStringAsFixed(0),
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(8),
+                                GestureDetector(
+                                  onLongPressStart: (_) {
+                                    timer = Timer.periodic(
+                                        const Duration(milliseconds: 100),
+                                        (timer) {
+                                      setState(() {
+                                        weightValue++;
+                                      });
+                                    });
+                                  },
+                                  onLongPressEnd: (_) {
+                                    timer?.cancel();
+                                  },
+                                  onTap: () {
+                                    setState(() {
+                                      weightValue++;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Text(
+                            "Kg",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const Gap(10),
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        color: Colors.grey.withOpacity(0.3),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            "Age",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onLongPressStart: (_) {
+                                    timer = Timer.periodic(
+                                        const Duration(milliseconds: 100),
+                                        (timer) {
+                                      setState(() {
+                                        ageValue--;
+                                      });
+                                    });
+                                  },
+                                  onLongPressEnd: (_) {
+                                    timer?.cancel();
+                                  },
+                                  onTap: () {
+                                    setState(() {
+                                      ageValue--;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.remove,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(8),
+                                Expanded(
+                                  child: Center(
+                                    child: Text(
+                                      ageValue.toStringAsFixed(0),
+                                      style: const TextStyle(
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const Gap(8),
+                                GestureDetector(
+                                  onLongPressStart: (_) {
+                                    timer = Timer.periodic(
+                                        const Duration(milliseconds: 100),
+                                        (timer) {
+                                      setState(() {
+                                        ageValue++;
+                                      });
+                                    });
+                                  },
+                                  onLongPressEnd: (_) {
+                                    timer?.cancel();
+                                  },
+                                  onTap: () {
+                                    setState(() {
+                                      ageValue++;
+                                    });
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        color:
+                                            Colors.deepPurple.withOpacity(0.5)),
+                                    child: const Padding(
+                                      padding: EdgeInsets.all(15),
+                                      child: Icon(
+                                        Icons.add,
+                                        size: 25,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Text(
+                            "Year",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const Gap(10),
             ElevatedButton.icon(
