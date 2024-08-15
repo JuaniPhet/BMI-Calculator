@@ -72,6 +72,7 @@ class _BmiScreenState extends State<BmiScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: const Icon(
           Icons.timelapse,
@@ -112,6 +113,7 @@ class _BmiScreenState extends State<BmiScreen> {
                   TextFormField(
                     controller: _fisrtNameController,
                     focusNode: firstFocusNode,
+                    keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
                       hintText: 'Enter your firstname',
                       border: OutlineInputBorder(),
@@ -153,7 +155,6 @@ class _BmiScreenState extends State<BmiScreen> {
                         onPressed: () {
                           genderBloc.add(
                               FetchGender(name: _fisrtNameController.text));
-                          print(_fisrtNameController.text);
                         },
                         label: state is FetchGenderLoading
                             ? const CircularProgressIndicator(
@@ -446,7 +447,7 @@ class _BmiScreenState extends State<BmiScreen> {
                         color: Colors.grey.withOpacity(0.3),
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           const Text(
                             "Weight",
@@ -468,7 +469,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                         const Duration(milliseconds: 100),
                                         (timer) {
                                       setState(() {
-                                        weightValue--;
+                                        weightValue <= 1 ? 1 : weightValue--;
                                       });
                                     });
                                   },
@@ -477,7 +478,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   },
                                   onTap: () {
                                     setState(() {
-                                      weightValue--;
+                                      weightValue <= 1 ? 1 : weightValue--;
                                     });
                                   },
                                   child: Container(
@@ -561,7 +562,7 @@ class _BmiScreenState extends State<BmiScreen> {
                         color: Colors.grey.withOpacity(0.3),
                       ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           const Text(
                             "Age",
@@ -583,7 +584,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                         const Duration(milliseconds: 100),
                                         (timer) {
                                       setState(() {
-                                        ageValue--;
+                                        ageValue <= 1 ? 1 : ageValue--;
                                       });
                                     });
                                   },
@@ -592,7 +593,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                   },
                                   onTap: () {
                                     setState(() {
-                                      ageValue--;
+                                      ageValue <= 1 ? 1 : ageValue--;
                                     });
                                   },
                                   child: Container(
@@ -694,6 +695,7 @@ class _BmiScreenState extends State<BmiScreen> {
                     vertical: 10,
                   )),
             ),
+            const Gap(10),
           ],
         ),
       ),
