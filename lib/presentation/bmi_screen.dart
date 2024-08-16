@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_fourth/data/models/bmi_model.dart';
 import 'package:gap/gap.dart';
 
 import '../business_logic/gender_bloc/gender_bloc.dart';
@@ -80,15 +81,19 @@ class _BmiScreenState extends State<BmiScreen> {
           color: Colors.deepPurple,
           size: 40,
         ),
-        title: const Expanded(
-          child: Text(
-            "BMI Calculator",
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w500,
+        title: const Row(
+          children: [
+            Expanded(
+              child: Text(
+                "BMI Calculator",
+                textAlign: TextAlign.start,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
         actions: const [
           Icon(
@@ -679,7 +684,16 @@ class _BmiScreenState extends State<BmiScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const BmiResultScreen(),
+                    builder: (context) => BmiResultScreen(
+                      bmi: BmiModel(
+                        height: unit == "Ft"
+                            ? FtToCm(heightValue)
+                            : unit == "In"
+                                ? InToCm(heightValue)
+                                : heightValue,
+                        weight: weightValue,
+                      ),
+                    ),
                   ),
                 );
               },
