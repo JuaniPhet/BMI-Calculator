@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../business_logic/gender_bloc/gender_bloc.dart';
+import 'bmi_result_screen.dart';
 
 class BmiScreen extends StatefulWidget {
   // final GenderModel genderModel;
@@ -228,7 +229,7 @@ class _BmiScreenState extends State<BmiScreen> {
                       ),
                     ),
                   ),
-                  Gap(10),
+                  const Gap(10),
                   Expanded(
                     child: InkWell(
                       onTap: () {
@@ -674,7 +675,14 @@ class _BmiScreenState extends State<BmiScreen> {
             ),
             const Gap(10),
             ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BmiResultScreen(),
+                  ),
+                );
+              },
               label: const Text(
                 "Calculate",
                 style: TextStyle(
