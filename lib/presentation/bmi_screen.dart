@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_fourth/data/models/bmi_model.dart';
 import 'package:gap/gap.dart';
+
+import '../data/models/bmi_model.dart';
+// import 'package:flutter_fourth/data/models/gender_model.dart';
 
 import '../business_logic/gender_bloc/gender_bloc.dart';
 import 'bmi_result_screen.dart';
@@ -15,11 +17,11 @@ class BmiScreen extends StatefulWidget {
     // required this.genderModel,
   });
 
-  TextEditingController get firstNameController => firstNameController;
+  // TextEditingController get firstNameController => firstNameController;
 
-  String get gender => gender;
+  // String get gender => gender;
 
-  double get ageValue => ageValue;
+  // double get ageValue => ageValue;
 
   @override
   State<BmiScreen> createState() => _BmiScreenState();
@@ -28,7 +30,7 @@ class BmiScreen extends StatefulWidget {
 class _BmiScreenState extends State<BmiScreen> {
   late GenderBloc genderBloc;
 
-  String gender = "male";
+  String genderValue = "male";
   bool isMale = true;
   String unit = "Cm";
   double heightValue = 160;
@@ -157,8 +159,8 @@ class _BmiScreenState extends State<BmiScreen> {
 
                       if (state is FetchGenderSuccess) {
                         setState(() {
-                          gender = state.genderModel.gender;
-                          isMale = gender == 'male';
+                          genderValue = state.genderModel.gender;
+                          isMale = genderValue == 'male';
                         });
                       }
                     },
@@ -207,7 +209,7 @@ class _BmiScreenState extends State<BmiScreen> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          gender = "male";
+                          genderValue = "male";
                           isMale = true;
                         });
                       },
@@ -245,7 +247,7 @@ class _BmiScreenState extends State<BmiScreen> {
                     child: InkWell(
                       onTap: () {
                         setState(() {
-                          gender = "female";
+                          genderValue = "female";
                           isMale = false;
                         });
                       },
@@ -699,6 +701,8 @@ class _BmiScreenState extends State<BmiScreen> {
                                 : heightValue,
                         weight: weightValue,
                       ),
+                      name: fisrtNameController.text,
+                      gender: genderValue,
                     ),
                   ),
                 );

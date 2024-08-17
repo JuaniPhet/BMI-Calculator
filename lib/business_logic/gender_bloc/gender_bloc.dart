@@ -1,17 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_fourth/data/services/gender_service.dart';
+import 'package:flutter_fourth/data/services/bmi_service.dart';
 import 'package:meta/meta.dart';
 
-import '../../data/repositories/gender_repository.dart';
+import '../../data/repositories/bmi_repository.dart';
 import '../../data/models/gender_model.dart';
 
 part 'gender_event.dart';
 part 'gender_state.dart';
 
 class GenderBloc extends Bloc<GenderEvent, GenderState> {
-  final GenderRepository repository = GenderRepository(
-    genderService: GenderService(
+  final BmiRepository repository = BmiRepository(
+    BmiService: BmiService(
       dio: Dio(),
     ),
   );

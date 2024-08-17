@@ -1,12 +1,8 @@
 import 'bmi_detail_model.dart';
-import 'bmi_gemi_model.dart';
-import 'package:get_it/get_it.dart';
 
-import '../../presentation/bmi_screen.dart';
+// import '../../presentation/bmi_screen.dart';
 
-GetIt getIt = GetIt.instance;
-
-BmiScreen bmiScreen = const BmiScreen();
+// BmiScreen bmiScreen = const BmiScreen();
 
 // void setup() {
 //   getIt.registerSingleton<BmiScreen>(const BmiScreen());
@@ -23,20 +19,7 @@ class BmiModel {
     if (imc < 18.5) {
       return BmiDetailModel(
         status: "Poids Insuffisant",
-        advice: geminiAdvice(
-          username: bmiScreen.firstNameController.text,
-          genre: bmiScreen.gender,
-          imc: imc,
-          weight: weight,
-          age: bmiScreen.ageValue,
-        ).toString(),
-        // advice: geminiAdvice(
-        //   username: getIt.get<BmiScreen>().firstNameController.text,
-        //   genre: getIt.get<BmiScreen>().gender,
-        //   imc: imc,
-        //   weight: weight,
-        //   age: getIt.get<BmiScreen>().ageValue,
-        // ).toString(),
+        advice: "Pour un poids Insuffisant ...",
       );
     } else if (imc >= 18.5 && imc <= 24.9) {
       return BmiDetailModel(
