@@ -38,6 +38,8 @@ dependencies:
   gap: ^3.0.1
   dio: ^5.5.0+1
   flutter_bloc: ^8.1.6
+  google_generative_ai: ^0.4.4
+  get_it: ^7.7.0
 
 dev_dependencies:
   flutter_test:

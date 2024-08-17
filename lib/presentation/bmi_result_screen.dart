@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+// import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../data/models/bmi_model.dart';
 import 'bmi_screen.dart';
 
 class BmiResultScreen extends StatelessWidget {
   final BmiModel bmi;
-  const BmiResultScreen({
+
+  BmiResultScreen({
     super.key,
     required this.bmi,
   });
@@ -124,7 +126,7 @@ class BmiResultScreen extends StatelessWidget {
             const Gap(10),
             Text(
               bmi.status.status,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w500,
                 color: Colors.black,

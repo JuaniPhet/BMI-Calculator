@@ -15,6 +15,12 @@ class BmiScreen extends StatefulWidget {
     // required this.genderModel,
   });
 
+  TextEditingController get firstNameController => firstNameController;
+
+  String get gender => gender;
+
+  double get ageValue => ageValue;
+
   @override
   State<BmiScreen> createState() => _BmiScreenState();
 }
@@ -30,20 +36,20 @@ class _BmiScreenState extends State<BmiScreen> {
   double ageValue = 21;
   Timer? timer;
 
-  late TextEditingController _fisrtNameController;
+  late TextEditingController fisrtNameController;
   late FocusNode firstFocusNode;
 
   @override
   void initState() {
     genderBloc = GenderBloc();
-    _fisrtNameController = TextEditingController();
+    fisrtNameController = TextEditingController();
     firstFocusNode = FocusNode();
     super.initState();
   }
 
   @override
   void dispose() {
-    _fisrtNameController.dispose();
+    fisrtNameController.dispose();
     super.dispose();
   }
 
@@ -117,7 +123,7 @@ class _BmiScreenState extends State<BmiScreen> {
               child: Column(
                 children: [
                   TextFormField(
-                    controller: _fisrtNameController,
+                    controller: fisrtNameController,
                     focusNode: firstFocusNode,
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
@@ -159,8 +165,8 @@ class _BmiScreenState extends State<BmiScreen> {
                     builder: (context, state) {
                       return ElevatedButton.icon(
                         onPressed: () {
-                          genderBloc.add(
-                              FetchGender(name: _fisrtNameController.text));
+                          genderBloc
+                              .add(FetchGender(name: fisrtNameController.text));
                         },
                         label: state is FetchGenderLoading
                             ? const CircularProgressIndicator(

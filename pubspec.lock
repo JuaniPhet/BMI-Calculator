@@ -115,6 +115,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.1"
+  get_it:
+    dependency: "direct main"
+    description:
+      name: get_it
+      sha256: d85128a5dae4ea777324730dc65edd9c9f43155c109d5cc0a69cab74139fbac1
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.7.0"
+  google_generative_ai:
+    dependency: "direct main"
+    description:
+      name: google_generative_ai
+      sha256: e2f4c0ac13f0898f670ce5ac0dc4501ebe09b96f9d59163724380d9aa82065be
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.4"
+  http:
+    dependency: transitive
+    description:
+      name: http
+      sha256: b9c29a161230ee03d3ccf545097fccd9b87a5264228c5d348202e0f0c28f9010
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.2"
   http_parser:
     dependency: transitive
     description:
@@ -280,6 +304,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "14.2.1"
+  web:
+    dependency: transitive
+    description:
+      name: web
+      sha256: d43c1d6b787bf0afad444700ae7f4db8827f701bc61c255ac8d328c6f4d52062
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
 sdks:
   dart: ">=3.4.3 <4.0.0"
   flutter: ">=3.18.0-18.0.pre.54"
