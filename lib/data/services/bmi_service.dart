@@ -38,13 +38,15 @@ class BmiService {
           Tu dois donner des astuces qui permettrons d'avoir un IMC normal et d'améliorer sa santé en fonction des informations tels que 
           le prénom de l'utilisateur $username, son genre (masculin ou feminin) $genre, son IMC (indice de masse corporelle) $imc, son poids $weight, son âge $age.
 
-          Tes astuces pourront être basés sur l'alimentation, les activités physiques, la quantité de repos, l'hydratation et tu devras tenir compte du genre et de l'âge de l'utisateur. 
+          Tes astuces pourront être basés sur l'alimentation, les activités physiques, la quantité de repos, l'hydratation et tu devras tenir compte du genre $genre et de l'âge $age de l'utisateur. 
           
           Tu peux utiliser des sources comme : les publications de travaux de recherche des différents scientifiques, des livres scientifiques, des articles et des sites internet.
 
           Donnes des phrases avec un vocabulaire simple et détaillé.
 
-          Tu pourras ajouter à la fin tes sources et des liens internet utiles à l'utilisateur pour le permettre d'avoir plus de conseils de santé.
+          Ajoutes à la fin des liens internet utiles à l'utilisateur pour le permettre d'avoir plus de conseils de santé et ne lui demande jamais de te poser des questions.
+
+          Utilise les markdowns pour formatter le texte. 
           
           Parle comme à un ami, pas trop rigolo, ni trop sérieux.
         ''',

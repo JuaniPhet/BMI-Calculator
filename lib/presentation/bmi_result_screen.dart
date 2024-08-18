@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../business_logic/bmi_advice/bmi_advice_bloc.dart';
 // import 'package:flutter_fourth/data/models/gender_model.dart';
@@ -27,6 +29,12 @@ class BmiResultScreen extends StatefulWidget {
 
 class _BmiResultScreenState extends State<BmiResultScreen> {
   late BmiAdviceBloc adviceBloc;
+
+  Future<void> _launchURL(String url) async {
+    if (!await launchUrl(Uri.parse(url))) {
+      print('Could not launch $url');
+    }
+  }
 
   @override
   void initState() {
@@ -77,13 +85,6 @@ class _BmiResultScreenState extends State<BmiResultScreen> {
       body: BlocBuilder<BmiAdviceBloc, BmiAdviceState>(
         bloc: adviceBloc,
         builder: (context, state) {
-          // if (state is FetchBmiAdviceLoading) {
-          //   return const Center(child: CircularProgressIndicator.adaptive());
-          // }
-          // if (state is FetchBmiAdviceFailure) {
-          //   return Center(child: Text(state.message));
-          // }
-          // if (state is FetchBmiAdviceSuccess) {
           return Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: 12,
@@ -125,7 +126,12 @@ class _BmiResultScreenState extends State<BmiResultScreen> {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.deepPurple.withOpacity(0.6),
+                                color: widget.bmi.imc < 18.5
+                                    ? Colors.orange
+                                    : widget.bmi.imc >= 18.5 &&
+                                            widget.bmi.imc <= 24.9
+                                        ? Colors.deepPurple.withOpacity(0.6)
+                                        : const Color.fromARGB(255, 236, 16, 0),
                               ),
                             ),
                           ],
@@ -160,6 +166,7 @@ class _BmiResultScreenState extends State<BmiResultScreen> {
                       //     });
                       //   },
                       // ),
+                      const Gap(20),
                     ],
                   ),
                 ),
@@ -175,19 +182,32 @@ class _BmiResultScreenState extends State<BmiResultScreen> {
                 const Gap(10),
                 Container(
                   child: state is FetchBmiAdviceLoading
-                      ? CircularProgressIndicator(
-                          strokeWidth: 4,
-                          strokeCap: StrokeCap.square,
-                          color: Colors.deepPurple.withOpacity(0.5),
-                          backgroundColor: Colors.grey.withOpacity(0.3),
+                      ? Chip(
+                          label: CircularProgressIndicator(
+                            strokeWidth: 4,
+                            strokeCap: StrokeCap.square,
+                            color: Colors.deepPurple.withOpacity(0.5),
+                            backgroundColor: Colors.grey.withOpacity(0.3),
+                          ),
                         )
                       : state is FetchBmiAdviceSuccess
-                          ? Text(
-                              "${state.response.text}",
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black,
+                          ? MarkdownBody(
+                              data: '''${state.response.text}''',
+                              onTapLink: (text, href, title) {
+                                _launchURL(href!);
+                              },
+                              styleSheet: MarkdownStyleSheet(
+                                a: const TextStyle(
+                                  color: Colors.deepPurple,
+                                  fontStyle: FontStyle.italic,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.deepPurple,
+                                ),
+                                p: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black,
+                                ),
                               ),
                             )
                           : state is FetchBmiAdviceFailure

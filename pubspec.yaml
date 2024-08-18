@@ -40,6 +40,8 @@ dependencies:
   flutter_bloc: ^8.1.6
   google_generative_ai: ^0.4.4
   get_it: ^7.7.0
+  flutter_markdown: ^0.7.3+1
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:
