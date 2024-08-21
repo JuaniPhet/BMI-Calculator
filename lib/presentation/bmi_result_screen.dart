@@ -5,7 +5,6 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../business_logic/bmi_advice/bmi_advice_bloc.dart';
-// import 'package:flutter_fourth/data/models/gender_model.dart';
 
 import '../data/models/bmi_model.dart';
 
@@ -13,10 +12,8 @@ class BmiResultScreen extends StatefulWidget {
   final BmiModel bmi;
   final String name;
   final String gender;
-  // final GenderModel myGenderModel;
-  // final BmiScreen myBmiScreen;
 
-  BmiResultScreen({
+  const BmiResultScreen({
     super.key,
     required this.bmi,
     required this.name,

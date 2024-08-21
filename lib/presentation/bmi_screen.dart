@@ -5,23 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:gap/gap.dart';
 
 import '../data/models/bmi_model.dart';
-// import 'package:flutter_fourth/data/models/gender_model.dart';
-
 import '../business_logic/gender_bloc/gender_bloc.dart';
 import 'bmi_result_screen.dart';
 
 class BmiScreen extends StatefulWidget {
-  // final GenderModel genderModel;
   const BmiScreen({
     super.key,
-    // required this.genderModel,
   });
-
-  // TextEditingController get firstNameController => firstNameController;
-
-  // String get gender => gender;
-
-  // double get ageValue => ageValue;
 
   @override
   State<BmiScreen> createState() => _BmiScreenState();
@@ -34,8 +24,8 @@ class _BmiScreenState extends State<BmiScreen> {
   bool isMale = true;
   String unit = "Cm";
   double heightValue = 160;
-  double weightValue = 10;
-  double ageValue = 21;
+  double weightValue = 50;
+  double ageValue = 20;
   Timer? timer;
 
   late TextEditingController fisrtNameController;
@@ -515,7 +505,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     child: Text(
                                       weightValue.toStringAsFixed(0),
                                       style: const TextStyle(
-                                        fontSize: 30,
+                                        fontSize: 19,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
@@ -630,7 +620,7 @@ class _BmiScreenState extends State<BmiScreen> {
                                     child: Text(
                                       ageValue.toStringAsFixed(0),
                                       style: const TextStyle(
-                                        fontSize: 30,
+                                        fontSize: 19,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

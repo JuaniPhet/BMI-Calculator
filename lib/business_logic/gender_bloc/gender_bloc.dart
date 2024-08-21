@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_fourth/data/services/bmi_service.dart';
 import 'package:meta/meta.dart';
 
+import '../../data/services/bmi_service.dart';
 import '../../data/repositories/bmi_repository.dart';
 import '../../data/models/gender_model.dart';
 
